@@ -31,7 +31,7 @@ function updateNow() {
   var temps = {};
   for (var i = 0; i < config.w1.length; i++) {
     var temp = 0;
-    if (config.w1[i].id == '28-00042c32c1aa' || config.w1[i].id == '28-00042c32c1ab') {
+    if (config.w1[i].id == '28-00042c32c1aa' || config.w1[i].id == '28-0000054c2ec2') {
       temp = getRandomInt(15, 30);
     } else {
       var data = fs.readFileSync(config.w1[i].path);

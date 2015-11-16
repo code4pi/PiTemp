@@ -30,13 +30,8 @@ if (!checkFileExist(filename)) {
 function updateNow() {
   var temps = {};
   for (var i = 0; i < config.w1.length; i++) {
-    var temp = 0;
-    if (config.w1[i].id == '28-00042c32c1aa' || config.w1[i].id == '28-0000054c2ec2') {
-      temp = getRandomInt(15, 30);
-    } else {
-      var data = fs.readFileSync(config.w1[i].path);
-      temp = parseFloat(data.toString('ascii').match(/t=([0-9]+)/)[1]) / 1000;
-    }
+    var data = fs.readFileSync(config.w1[i].path);
+    var temp = parseFloat(data.toString('ascii').match(/t=([0-9]+)/)[1]) / 1000;
     temps[config.w1[i].id] = temp;
   }
   rrd.update(filename, [getCurrentTime(), temps], function(error) {
@@ -44,10 +39,6 @@ function updateNow() {
       console.error(error);
     }
   });
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function checkFileExist(path) {

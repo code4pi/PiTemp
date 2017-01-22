@@ -22,4 +22,11 @@ dateInterval.month = {
   }
 };
 
+dateInterval.year = {
+    resolution : 3600 * 24,
+    start : function () {
+        return moment().subtract(1, 'year').unix();
+    }
+};
+
 module.exports = dateInterval;

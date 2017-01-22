@@ -29,3 +29,7 @@ node_modules
 
 # RRD Files
 *.rrd
+
+# Intellij files
+*.iml
+.idea

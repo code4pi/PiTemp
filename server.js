@@ -11,7 +11,7 @@ var filename = config.filename;
 if (!checkFileExist(filename)) {
   var createArgs = [];
   for (var i = 0; i < config.w1.length; i++) {
-    createArgs.push('DS:' + config.w1[i].id + ':GAUGE:600:0:60');
+    createArgs.push('DS:' + config.w1[i].id + ':GAUGE:600:-50:100');
   }
   createArgs.push('RRA:AVERAGE:0.5:1:288');
   createArgs.push('RRA:AVERAGE:0.5:12:168');
@@ -31,7 +31,7 @@ function updateNow() {
   var temps = {};
   for (var i = 0; i < config.w1.length; i++) {
     var data = fs.readFileSync(config.w1[i].path);
-    var temp = parseFloat(data.toString('ascii').match(/t=([0-9]+)/)[1]) / 1000;
+    var temp = parseFloat(data.toString('ascii').match(/t=(-?[0-9]+)/)[1]) / 1000;
     temps[config.w1[i].id] = temp;
   }
   rrd.update(filename, [getCurrentTime(), temps], function(error) {

@@ -5,6 +5,9 @@ var dateInterval = require('./dateInterval');
 var rrd = require('rrd');
 var fs = require('fs');
 var moment = require('moment');
+var letsEncrypt = require('letsencrypt-express');
+var http = require('http');
+
 
 var filename = config.filename;
 
@@ -16,7 +19,7 @@ if (!checkFileExist(filename)) {
   createArgs.push('RRA:AVERAGE:0.5:1:288');
   createArgs.push('RRA:AVERAGE:0.5:12:168');
   createArgs.push('RRA:AVERAGE:0.5:288:365');
-  rrd.create(filename, 300, getCurrentTime() - 300, createArgs, function(error) {
+  rrd.create(filename, 300, getCurrentTime() - 300, createArgs, function (error) {
     if (error) {
       console.log("Error:", error);
       process.exit(1);
@@ -34,7 +37,7 @@ function updateNow() {
     var temp = parseFloat(data.toString('ascii').match(/t=(-?[0-9]+)/)[1]) / 1000;
     temps[config.w1[i].id] = temp;
   }
-  rrd.update(filename, [getCurrentTime(), temps], function(error) {
+  rrd.update(filename, [getCurrentTime(), temps], function (error) {
     if (error !== null) {
       console.error(error);
     }
@@ -62,7 +65,7 @@ setInterval(updateNow, 5 * 60 * 1000);
 
 app.use(express.static('public'));
 
-app.get('/getData', function(req, res) {
+app.get('/getData', function (req, res) {
   var result = [];
   for (var i = 0; i < config.w1.length; i++) {
     result.push({
@@ -78,7 +81,7 @@ app.get('/getData', function(req, res) {
     start: dateInterval[req.query.interval].start(),
     end: moment().unix(),
     resolution: dateInterval[req.query.interval].resolution
-  }, function(time, value) {
+  }, function (time, value) {
 
     if (time == null) {
       res.json(result);
@@ -94,11 +97,22 @@ app.get('/getData', function(req, res) {
   }, '-a');
 });
 
-var server = app.listen(config.http.port, function() {
+if (config.https.enable) {
+  letsEncrypt.create({
+    server: config.https.production ? 'https://acme-v01.api.letsencrypt.org/directory' : 'staging',
+    email: config.https.email,
+    agreeTos: true,
+    approveDomains: [config.https.domain],
+    app: app
+  }).listen(config.http.port, config.https.port, function () {
+    console.log('PiTemp app listening at https://%s', config.https.domain);
+  });
+} else {
+  var server = app.listen(config.http.port, function () {
 
-  var host = server.address().address;
-  var port = server.address().port;
+    var host = server.address().address;
+    var port = server.address().port;
 
-  console.log('PiTemp app listening at http://%s:%s', host, port);
-
-});
+    console.log('PiTemp app listening at http://%s:%s', host, port);
+  });
+}

@@ -4,6 +4,21 @@ config.http = {};
 // Port of web interface (Warning: Port below 1024 can only start by root user)
 config.http.port = 8080;
 
+config.https = {};
+// Enable HTTPS
+config.https.enable = false;
+// HTTPS listen port. Let's Encrypt force expose public port 80 and 443.
+// But redirection can be done using HTTP proxy or NAT Router.
+config.https.port = 8081;
+// Domain for HTTPS certificate
+config.https.domain = 'example.com';
+// Email for HTTPS certificate registration (required by Let's Encrypt)
+config.https.email = 'admin@example.com';
+// Development configuration for test purpose to avoid being blocked by hitting rate limits with bad requests:
+// See https://git.daplie.com/Daplie/greenlock-express#why-you-must-use-staging-first
+// After ensure that all system configuration is properly set, put this value to true to get real certificate
+config.https.production = false;
+
 // Path of the .rrd file
 config.filename = 'PiTemp.rrd';
 

@@ -104,9 +104,7 @@ if (config.https.enable) {
     agreeTos: true,
     approveDomains: [config.https.domain],
     app: app
-  }).listen(config.http.port, config.https.port, function () {
-    console.log('PiTemp app listening at https://%s', config.https.domain);
-  });
+  }).listen(config.http.port, config.https.port);
 } else {
   var server = app.listen(config.http.port, function () {
 

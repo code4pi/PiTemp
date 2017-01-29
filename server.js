@@ -7,7 +7,8 @@ var fs = require('fs');
 var moment = require('moment');
 var letsEncrypt = require('letsencrypt-express');
 var http = require('http');
-
+var auth = require('basic-auth');
+var crypto = require('crypto');
 
 var filename = config.filename;
 
@@ -62,6 +63,21 @@ function getCurrentTime() {
 }
 
 setInterval(updateNow, 5 * 60 * 1000);
+
+if (config.auth.enable) {
+  app.use(function (req, res, next) {
+    var user = auth(req);
+
+    var sha256 = crypto.createHash('sha256');
+
+    if (user === undefined || user['name'] !== config.auth.username || sha256.update(user['pass']).digest('hex') !== config.auth.password) {
+      res.set('WWW-Authenticate', 'Basic realm="PiTemp"');
+      res.sendStatus(401);
+    } else {
+      next();
+    }
+  });
+}
 
 app.use(express.static('public'));
 

@@ -19,6 +19,14 @@ config.https.email = 'admin@example.com';
 // After ensure that all system configuration is properly set, put this value to true to get real certificate
 config.https.production = false;
 
+config.auth = {};
+// Enable basic auth authentication
+config.auth.enable = false;
+// Username for basic auth
+config.auth.username = 'admin';
+// Sha256 of the password (can be obtain with the command echo -n password | sha256sum), default password
+config.auth.password = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+
 // Path of the .rrd file
 config.filename = 'PiTemp.rrd';
 
